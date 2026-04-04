@@ -6,6 +6,13 @@ export default function MenuCard({ item, onViewAR }) {
   return (
     <div className="menu-card">
       <div className="menu-card-preview">
+        {item.imageUrl && (
+          <img
+            className="menu-card-image"
+            src={item.imageUrl}
+            alt={item.name}
+          />
+        )}
         <div className="menu-card-3d-badge">3D</div>
       </div>
       <div className="menu-card-body">

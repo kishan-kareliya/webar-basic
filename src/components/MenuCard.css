@@ -24,6 +24,12 @@
   position: relative;
 }
 
+.menu-card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 .menu-card-3d-badge {
   background: #ff6b35;
   color: #fff;

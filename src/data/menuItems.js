@@ -1,11 +1,7 @@
 /**
  * Static menu data — replace with API calls when integrating with your POS backend.
  *
- * Place .glb files in public/models/ and reference as "/models/filename.glb"
- *
- * arScale (optional): Override auto-scaling for this item.
- *   - null/undefined → auto-normalize to ~30cm (default, works for any .glb)
- *   - number → target size in meters (e.g. 0.15 for a small coffee cup, 0.5 for a large pizza)
+ * Place .glb files in public/models/ and images in public/images/
  */
 const menuItems = [
   {
@@ -15,6 +11,7 @@ const menuItems = [
     price: 12.99,
     category: "Main Course",
     glbUrl: "/models/burger.glb",
+    imageUrl: null,
     arScale: null,
   },
   {
@@ -24,42 +21,77 @@ const menuItems = [
     price: 14.99,
     category: "Main Course",
     glbUrl: "/models/pizza.glb",
+    imageUrl: "/images/pizza.png",
     arScale: 0.4,
   },
   {
     id: 3,
-    name: "Caesar Salad",
-    description: "Crisp romaine lettuce with parmesan, croutons, and caesar dressing",
-    price: 9.99,
+    name: "Crispy Chicken Bao",
+    description: "Steamed bao bun stuffed with crispy fried chicken and tangy slaw",
+    price: 10.99,
     category: "Starters",
-    glbUrl: "/models/salad.glb",
+    glbUrl: "/models/Chrispy_Chicken_Bao.glb",
+    imageUrl: "/images/chicken bao.png",
     arScale: null,
   },
   {
     id: 4,
-    name: "Chocolate Cake",
-    description: "Rich chocolate layer cake with ganache frosting",
-    price: 7.99,
-    category: "Desserts",
-    glbUrl: "/models/cake.glb",
-    arScale: 0.2,
+    name: "Filling Cheese Momo",
+    description: "Steamed dumplings generously filled with melted cheese blend",
+    price: 9.99,
+    category: "Starters",
+    glbUrl: "/models/Filling_cheese_momo.glb",
+    imageUrl: "/images/filling-cheese-dumpling.png",
+    arScale: null,
   },
   {
     id: 5,
-    name: "Iced Coffee",
-    description: "Cold brew coffee served over ice with cream",
-    price: 4.99,
-    category: "Beverages",
-    glbUrl: "/models/coffee.glb",
-    arScale: 0.25,
+    name: "Mushroom Chilli",
+    description: "Crispy mushrooms tossed in spicy chilli sauce with peppers",
+    price: 11.99,
+    category: "Starters",
+    glbUrl: "/models/Mushroom_Chilli.glb",
+    imageUrl: null,
+    arScale: null,
   },
   {
     id: 6,
-    name: "French Fries",
-    description: "Crispy golden fries with seasoning salt",
-    price: 5.99,
+    name: "Paneer Malai Tikka",
+    description: "Creamy marinated paneer cubes grilled to perfection",
+    price: 13.99,
+    category: "Main Course",
+    glbUrl: "/models/Paneer_Malai_Tikka.glb",
+    imageUrl: "/images/paneer-malai-tikka.png",
+    arScale: null,
+  },
+  {
+    id: 7,
+    name: "Tandoori Chaap",
+    description: "Soya chaap marinated in tandoori spices and chargrilled",
+    price: 12.99,
+    category: "Main Course",
+    glbUrl: "/models/tandoori_chaap.glb",
+    imageUrl: "/images/tandoori-chaap.png",
+    arScale: null,
+  },
+  {
+    id: 8,
+    name: "Veg Biryani",
+    description: "Fragrant basmati rice layered with spiced vegetables and herbs",
+    price: 14.99,
+    category: "Main Course",
+    glbUrl: "/models/vegbiryani.glb",
+    imageUrl: "/images/veg-biryani.png",
+    arScale: null,
+  },
+  {
+    id: 9,
+    name: "Veg Seekh Kabab",
+    description: "Spiced vegetable skewers grilled on open flame",
+    price: 10.99,
     category: "Starters",
-    glbUrl: "/models/fries.glb",
+    glbUrl: "/models/veg_sikh_kabab.glb",
+    imageUrl: "/images/veg-seekh-kabab.png",
     arScale: null,
   },
 ];
