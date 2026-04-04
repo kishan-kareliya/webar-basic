@@ -1,0 +1,55 @@
+/* ─── App Layout ─── */
+.app {
+  min-height: 100vh;
+  background: #f5f5f5;
+}
+
+.app-header {
+  background: #fff;
+  padding: 24px 20px 16px;
+  border-bottom: 1px solid #eee;
+  text-align: center;
+}
+
+.app-title {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.app-subtitle {
+  margin: 4px 0 0;
+  font-size: 14px;
+  color: #999;
+}
+
+/* ─── Main Content ─── */
+.app-main {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 20px 16px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ─── Menu Grid ─── */
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+@media (max-width: 540px) {
+  .menu-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ─── Empty State ─── */
+.empty-state {
+  text-align: center;
+  color: #999;
+  padding: 40px 0;
+}

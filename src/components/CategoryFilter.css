@@ -1,0 +1,36 @@
+.category-filter {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.category-filter::-webkit-scrollbar {
+  display: none;
+}
+
+.category-btn {
+  background: #fff;
+  border: 1.5px solid #e0e0e0;
+  color: #666;
+  padding: 8px 18px;
+  border-radius: 24px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+
+.category-btn:hover {
+  border-color: #ff6b35;
+  color: #ff6b35;
+}
+
+.category-btn.active {
+  background: #ff6b35;
+  border-color: #ff6b35;
+  color: #fff;
+}
