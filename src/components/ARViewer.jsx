@@ -2,6 +2,14 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import "@google/model-viewer";
 import "./ARViewer.css";
 
+// Target size in meters — the model's largest dimension will be scaled to this.
+// 0.3m = 30cm is a realistic plate-of-food size on a table.
+const TARGET_SIZE_M = 0.3;
+// Minimum scale to prevent models from becoming invisible
+const MIN_SCALE = 0.01;
+// Maximum scale to prevent absurdly large models
+const MAX_SCALE = 100;
+
 const STATUS = {
   LOADING: "loading",
   READY: "ready",
@@ -15,11 +23,48 @@ export default function ARViewer({ item, onClose }) {
   const viewerRef = useRef(null);
   const [status, setStatus] = useState(STATUS.LOADING);
   const [arSupported, setArSupported] = useState(false);
-  const [arTracking, setArTracking] = useState(null); // "tracking" | "not-tracking"
+  const [arTracking, setArTracking] = useState(null);
   const [placed, setPlaced] = useState(false);
+  const [modelScale, setModelScale] = useState(null);
 
-  // ─── Model load / error ───
-  const handleLoad = useCallback(() => setStatus(STATUS.READY), []);
+  // ─── Auto-normalize model size on load ───
+  // GLB files come in wildly different scales depending on how they were exported.
+  // A burger might be 0.001m or 50m. We measure the bounding box and scale it
+  // so the largest dimension = target size.
+  //
+  // If item.arScale is set, use that as the target size in meters.
+  // Otherwise default to TARGET_SIZE_M (30cm).
+  const handleLoad = useCallback(() => {
+    const viewer = viewerRef.current;
+    if (!viewer) { setStatus(STATUS.READY); return; }
+
+    try {
+      const size = viewer.getDimensions();
+
+      if (size && (size.x > 0 || size.y > 0 || size.z > 0)) {
+        const maxDim = Math.max(size.x, size.y, size.z);
+        const targetSize = item.arScale || TARGET_SIZE_M;
+        let scale = targetSize / maxDim;
+
+        // Clamp to sane range
+        scale = Math.max(MIN_SCALE, Math.min(MAX_SCALE, scale));
+        setModelScale(scale);
+
+        // Apply uniform scale
+        viewer.scale = `${scale} ${scale} ${scale}`;
+
+        // Re-frame camera to fit the newly scaled model
+        requestAnimationFrame(() => {
+          viewer.updateFraming();
+        });
+      }
+    } catch {
+      // getDimensions not available — leave default scale
+    }
+
+    setStatus(STATUS.READY);
+  }, [item.arScale]);
+
   const handleError = useCallback(() => setStatus(STATUS.ERROR), []);
 
   // ─── AR lifecycle events ───
@@ -159,28 +204,12 @@ export default function ARViewer({ item, onClose }) {
             </div>
           )}
 
-          {/*
-            model-viewer config — these attributes control the entire AR pipeline:
-
-            ar-modes priority order:
-            1. scene-viewer  → Android: hands off to Google's native AR app (best stability)
-            2. webxr          → In-browser AR via WebXR API (Chrome Android fallback)
-            3. quick-look     → iOS: hands off to Apple's native AR Quick Look
-
-            ar-scale="fixed"  → CRITICAL: prevents the model from being resized by
-                                 the user in AR. Food should appear at real-world scale.
-
-            ar-placement="floor" → Anchors to horizontal surfaces (tables).
-
-            xr-environment    → Matches 3D lighting to real-world camera feed lighting
-                                 so the food doesn't look "pasted on".
-          */}
           <model-viewer
             ref={viewerRef}
             src={item.glbUrl}
             ar
             ar-modes="scene-viewer webxr quick-look"
-            ar-scale="fixed"
+            ar-scale="auto"
             ar-placement="floor"
             xr-environment
             camera-controls
@@ -194,10 +223,10 @@ export default function ARViewer({ item, onClose }) {
             exposure="1"
             loading="eager"
             reveal="auto"
-            camera-orbit="30deg 65deg 2m"
-            min-camera-orbit="auto auto 0.5m"
-            max-camera-orbit="auto auto 5m"
-            field-of-view="45deg"
+            interpolation-decay="100"
+            camera-orbit="30deg 65deg auto"
+            min-camera-orbit="auto auto auto"
+            max-camera-orbit="auto auto auto"
             interaction-prompt="auto"
             interaction-prompt-threshold="3000"
             style={{
@@ -206,12 +235,10 @@ export default function ARViewer({ item, onClose }) {
               visibility: status === STATUS.ERROR || status === STATUS.CAMERA_DENIED ? "hidden" : "visible",
             }}
           >
-            {/* Slot: custom AR button shown inside the model-viewer when in AR mode */}
             <button slot="ar-button" className="ar-slot-btn">
               Tap to place on table
             </button>
 
-            {/* Slot: custom loading progress bar */}
             <div slot="progress-bar" className="ar-progress-bar">
               <div className="ar-progress-fill" />
             </div>

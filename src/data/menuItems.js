@@ -1,8 +1,11 @@
 /**
  * Static menu data — replace with API calls when integrating with your POS backend.
- * Each item needs a `glbUrl` pointing to the .glb model file.
  *
- * Place your .glb files in public/models/ and reference them as "/models/filename.glb"
+ * Place .glb files in public/models/ and reference as "/models/filename.glb"
+ *
+ * arScale (optional): Override auto-scaling for this item.
+ *   - null/undefined → auto-normalize to ~30cm (default, works for any .glb)
+ *   - number → target size in meters (e.g. 0.15 for a small coffee cup, 0.5 for a large pizza)
  */
 const menuItems = [
   {
@@ -12,7 +15,7 @@ const menuItems = [
     price: 12.99,
     category: "Main Course",
     glbUrl: "/models/burger.glb",
-    image: null,
+    arScale: null,
   },
   {
     id: 2,
@@ -21,7 +24,7 @@ const menuItems = [
     price: 14.99,
     category: "Main Course",
     glbUrl: "/models/pizza.glb",
-    image: null,
+    arScale: 0.4,
   },
   {
     id: 3,
@@ -30,7 +33,7 @@ const menuItems = [
     price: 9.99,
     category: "Starters",
     glbUrl: "/models/salad.glb",
-    image: null,
+    arScale: null,
   },
   {
     id: 4,
@@ -39,7 +42,7 @@ const menuItems = [
     price: 7.99,
     category: "Desserts",
     glbUrl: "/models/cake.glb",
-    image: null,
+    arScale: 0.2,
   },
   {
     id: 5,
@@ -48,7 +51,7 @@ const menuItems = [
     price: 4.99,
     category: "Beverages",
     glbUrl: "/models/coffee.glb",
-    image: null,
+    arScale: 0.25,
   },
   {
     id: 6,
@@ -57,7 +60,7 @@ const menuItems = [
     price: 5.99,
     category: "Starters",
     glbUrl: "/models/fries.glb",
-    image: null,
+    arScale: null,
   },
 ];
 
