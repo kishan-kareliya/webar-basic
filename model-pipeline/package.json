@@ -1,0 +1,18 @@
+{
+  "name": "food-ar-model-pipeline",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "GLB model validation and auto-fix pipeline for Food AR Viewer",
+  "scripts": {
+    "validate": "node validate-model.mjs",
+    "validate:all": "node validate-all.mjs",
+    "validate:fix": "node validate-model.mjs --fix"
+  },
+  "dependencies": {
+    "@gltf-transform/core": "^4.1.1",
+    "@gltf-transform/extensions": "^4.1.1",
+    "@gltf-transform/functions": "^4.1.1",
+    "sharp": "^0.33.0"
+  }
+}
