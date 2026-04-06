@@ -156,6 +156,14 @@ export default function ARViewer({ item, onClose }) {
     const viewer = viewerRef.current;
     if (!viewer) return;
 
+    // Ensure the model is fully loaded before launching AR — partial loads
+    // cause Scene Viewer / Quick Look to show geometry without textures.
+    if (!viewer.loaded) {
+      await new Promise((resolve) => {
+        viewer.addEventListener("load", resolve, { once: true });
+      });
+    }
+
     // Pre-check camera permission so the user sees our prompt, not a raw browser popup
     try {
       const permissionStatus = await navigator.permissions?.query({ name: "camera" });
@@ -223,6 +231,7 @@ export default function ARViewer({ item, onClose }) {
           <model-viewer
             ref={viewerRef}
             src={item.glbUrl}
+            {...(item.imageUrl ? { poster: item.imageUrl } : {})}
             ar
             ar-modes="webxr scene-viewer quick-look"
             ar-scale="fixed"
