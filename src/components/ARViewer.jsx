@@ -9,6 +9,8 @@ const TARGET_SIZE_M = 0.3;
 const MIN_SCALE = 0.01;
 // Maximum scale to prevent absurdly large models
 const MAX_SCALE = 100;
+// Max retries for failed model loads
+const MAX_RETRIES = 2;
 
 const STATUS = {
   LOADING: "loading",
@@ -26,6 +28,7 @@ export default function ARViewer({ item, onClose }) {
   const [arTracking, setArTracking] = useState(null);
   const [placed, setPlaced] = useState(false);
   const [modelScale, setModelScale] = useState(null);
+  const retryCountRef = useRef(0);
 
   // ─── Auto-normalize model size on load ───
   // GLB files come in wildly different scales depending on how they were exported.
@@ -65,7 +68,18 @@ export default function ARViewer({ item, onClose }) {
     setStatus(STATUS.READY);
   }, [item.arScale]);
 
-  const handleError = useCallback(() => setStatus(STATUS.ERROR), []);
+  // ─── Retry on error for large models that timeout ───
+  const handleError = useCallback(() => {
+    const viewer = viewerRef.current;
+    if (retryCountRef.current < MAX_RETRIES && viewer) {
+      retryCountRef.current += 1;
+      // Force reload by re-assigning the src with a cache-busting query
+      const base = item.glbUrl.split("?")[0];
+      viewer.src = `${base}?retry=${retryCountRef.current}`;
+    } else {
+      setStatus(STATUS.ERROR);
+    }
+  }, [item.glbUrl]);
 
   // ─── AR lifecycle events ───
   const handleARStatus = useCallback((e) => {
@@ -94,6 +108,8 @@ export default function ARViewer({ item, onClose }) {
   useEffect(() => {
     const viewer = viewerRef.current;
     if (!viewer) return;
+
+    retryCountRef.current = 0;
 
     viewer.addEventListener("load", handleLoad);
     viewer.addEventListener("error", handleError);
@@ -208,8 +224,8 @@ export default function ARViewer({ item, onClose }) {
             ref={viewerRef}
             src={item.glbUrl}
             ar
-            ar-modes="scene-viewer webxr quick-look"
-            ar-scale="auto"
+            ar-modes="webxr scene-viewer quick-look"
+            ar-scale="fixed"
             ar-placement="floor"
             xr-environment
             camera-controls
@@ -217,8 +233,8 @@ export default function ARViewer({ item, onClose }) {
             auto-rotate
             auto-rotate-delay="1000"
             rotation-per-second="20deg"
-            shadow-intensity="1.2"
-            shadow-softness="1"
+            shadow-intensity="1"
+            shadow-softness="0.8"
             environment-image="neutral"
             exposure="1"
             loading="eager"
