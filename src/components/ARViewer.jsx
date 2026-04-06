@@ -17,6 +17,7 @@ const STATUS = {
   READY: "ready",
   ERROR: "error",
   AR_ACTIVE: "ar-active",
+  AR_FAILED: "ar-failed",
   CAMERA_DENIED: "camera-denied",
   AR_UNSUPPORTED: "ar-unsupported",
 };
@@ -81,6 +82,16 @@ export default function ARViewer({ item, onClose }) {
     }
   }, [item.glbUrl]);
 
+  // ─── Manual retry after all auto-retries exhausted ───
+  const retryLoad = useCallback(() => {
+    const viewer = viewerRef.current;
+    if (!viewer) return;
+    retryCountRef.current = 0;
+    setStatus(STATUS.LOADING);
+    const base = item.glbUrl.split("?")[0];
+    viewer.src = `${base}?manual=${Date.now()}`;
+  }, [item.glbUrl]);
+
   // ─── AR lifecycle events ───
   const handleARStatus = useCallback((e) => {
     const s = e.detail.status;
@@ -95,7 +106,7 @@ export default function ARViewer({ item, onClose }) {
       setPlaced(false);
       setArTracking(null);
     } else if (s === "failed") {
-      setStatus(STATUS.READY);
+      setStatus(STATUS.AR_FAILED);
     }
   }, []);
 
@@ -156,12 +167,25 @@ export default function ARViewer({ item, onClose }) {
     const viewer = viewerRef.current;
     if (!viewer) return;
 
+    // Don't attempt AR if model failed to load
+    if (status === STATUS.ERROR) return;
+
     // Ensure the model is fully loaded before launching AR — partial loads
     // cause Scene Viewer / Quick Look to show geometry without textures.
     if (!viewer.loaded) {
-      await new Promise((resolve) => {
-        viewer.addEventListener("load", resolve, { once: true });
-      });
+      try {
+        await Promise.race([
+          new Promise((resolve) => {
+            viewer.addEventListener("load", resolve, { once: true });
+          }),
+          new Promise((_, reject) =>
+            setTimeout(() => reject(new Error("timeout")), 10_000)
+          ),
+        ]);
+      } catch {
+        // Load timed out — don't hang, let user retry
+        return;
+      }
     }
 
     // Pre-check camera permission so the user sees our prompt, not a raw browser popup
@@ -211,8 +235,11 @@ export default function ARViewer({ item, onClose }) {
             <div className="ar-status-overlay">
               <p className="ar-status-title">Failed to load 3D model</p>
               <p className="ar-status-hint">
-                Place your <code>.glb</code> file at: <code>{item.glbUrl}</code>
+                Check your connection and try again.
               </p>
+              <button className="ar-retry-btn" onClick={retryLoad}>
+                Try Again
+              </button>
             </div>
           )}
 
@@ -221,6 +248,18 @@ export default function ARViewer({ item, onClose }) {
               <p className="ar-status-title">Camera access denied</p>
               <p className="ar-status-hint">
                 Enable camera permission in your browser settings to use AR.
+              </p>
+              <button className="ar-retry-btn" onClick={() => setStatus(STATUS.READY)}>
+                Back to 3D view
+              </button>
+            </div>
+          )}
+
+          {status === STATUS.AR_FAILED && (
+            <div className="ar-status-overlay">
+              <p className="ar-status-title">AR could not start</p>
+              <p className="ar-status-hint">
+                Your device may not support AR, or camera access was blocked. Try again or view the 3D model below.
               </p>
               <button className="ar-retry-btn" onClick={() => setStatus(STATUS.READY)}>
                 Back to 3D view
@@ -257,7 +296,7 @@ export default function ARViewer({ item, onClose }) {
             style={{
               width: "100%",
               height: "100%",
-              visibility: status === STATUS.ERROR || status === STATUS.CAMERA_DENIED ? "hidden" : "visible",
+              visibility: status === STATUS.ERROR || status === STATUS.CAMERA_DENIED || status === STATUS.AR_FAILED ? "hidden" : "visible",
             }}
           >
             <button slot="ar-button" className="ar-slot-btn">
