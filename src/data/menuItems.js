@@ -109,7 +109,7 @@ const menuItems = [
     category: "Starters",
     glbUrl: "/models/powder_model.glb",
     imageUrl: "/images/veg-seekh-kabab.png",
-    arScale: 0.11, // ~11cm plate, measure actual
+    arScale: 0.001, // ~11cm plate, measure actual
   },
 ];
 
