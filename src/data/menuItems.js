@@ -2,6 +2,13 @@
  * Static menu data — replace with API calls when integrating with your POS backend.
  *
  * Place .glb files in public/models/ and images in public/images/
+ *
+ * arScale = real-world largest dimension of the plate/dish in meters.
+ * Measure the actual plate edge-to-edge at the restaurant with a tape.
+ * This controls how big the food appears on the table in AR.
+ *
+ * TODO: Replace all arScale values with real measurements.
+ * Current values are rough estimates — measure actual plates.
  */
 const menuItems = [
   {
@@ -12,7 +19,7 @@ const menuItems = [
     category: "Main Course",
     glbUrl: "/models/burger.glb",
     imageUrl: null,
-    arScale: null,
+    arScale: 0.22, // ~22cm plate, measure actual
   },
   {
     id: 2,
@@ -22,7 +29,7 @@ const menuItems = [
     category: "Main Course",
     glbUrl: "/models/pizza.glb",
     imageUrl: "/images/pizza.png",
-    arScale: 0.4,
+    arScale: 0.35, // ~35cm board, measure actual
   },
   {
     id: 3,
@@ -32,7 +39,7 @@ const menuItems = [
     category: "Starters",
     glbUrl: "/models/Chrispy_Chicken_Bao.glb",
     imageUrl: "/images/chicken bao.png",
-    arScale: null,
+    arScale: 0.16, // ~16cm small plate, measure actual
   },
   {
     id: 4,
@@ -42,7 +49,7 @@ const menuItems = [
     category: "Starters",
     glbUrl: "/models/Filling_cheese_momo.glb",
     imageUrl: "/images/filling-cheese-dumpling.png",
-    arScale: null,
+    arScale: 0.18, // ~18cm plate, measure actual
   },
   {
     id: 5,
@@ -52,7 +59,7 @@ const menuItems = [
     category: "Starters",
     glbUrl: "/models/Mushroom_Chilli.glb",
     imageUrl: null,
-    arScale: null,
+    arScale: 0.20, // ~20cm plate, measure actual
   },
   {
     id: 6,
@@ -62,7 +69,7 @@ const menuItems = [
     category: "Main Course",
     glbUrl: "/models/Paneer_Malai_Tikka.glb",
     imageUrl: "/images/paneer-malai-tikka.png",
-    arScale: null,
+    arScale: 0.24, // ~24cm plate, measure actual
   },
   {
     id: 7,
@@ -72,7 +79,7 @@ const menuItems = [
     category: "Main Course",
     glbUrl: "/models/tandoori_chaap.glb",
     imageUrl: "/images/tandoori-chaap.png",
-    arScale: null,
+    arScale: 0.24, // ~24cm plate, measure actual
   },
   {
     id: 8,
@@ -82,7 +89,7 @@ const menuItems = [
     category: "Main Course",
     glbUrl: "/models/vegbiryani.glb",
     imageUrl: "/images/veg-biryani.png",
-    arScale: null,
+    arScale: 0.26, // ~26cm bowl, measure actual
   },
   {
     id: 9,
@@ -92,7 +99,17 @@ const menuItems = [
     category: "Starters",
     glbUrl: "/models/veg_sikh_kabab.glb",
     imageUrl: "/images/veg-seekh-kabab.png",
-    arScale: null,
+    arScale: 0.22, // ~22cm plate, measure actual
+  },
+  {
+    id: 10,
+    name: "Powder",
+    description: "Spiced powder",
+    price: 10.99,
+    category: "Starters",
+    glbUrl: "/models/powder_model.glb",
+    imageUrl: "/images/veg-seekh-kabab.png",
+    arScale: 0.11, // ~11cm plate, measure actual
   },
 ];
 
